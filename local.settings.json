@@ -1,7 +1,16 @@
 {
   "IsEncrypted": false,
   "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "node",
-    "AzureWebJobsStorage": "UseDevelopmentStorage=true"
+    "SUPABASE_URL": "https://opjbgkoygdbjvlhoayzd.supabase.co",
+    "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wamJna295Z2RianZsaG9heXpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0NTYzNzUsImV4cCI6MjA2MDAzMjM3NX0.aAd3p4it7TBbkH6a0vAwcpfYCc5kVghdFxTzdtfYwr0",
+    "OPENAI_API_URL": "https://constitutional-compass-instance.openai.azure.com/",
+    "OPENAI_API_KEY": "FPw0krShTkZjsdBGZyhUSaEKi9Fts1VEmMjTYErk9Nv2u1OkimVnJQQJ99BDACrIdLPXJ3w3AAABACOGwkaC",
+    "OPENAI_DEPLOYMENT_NAME": "text-embedding-3-small"
+  },
+  "Host": {
+    "CORS": "http://localhost:3000", 
+    "CORSCredentials": true
   }
 }

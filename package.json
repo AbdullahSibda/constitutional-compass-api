@@ -1,13 +1,15 @@
 {
-  "name": "my-function-app",
+  "name": "constitutional-compass-function-app",
   "version": "1.0.0",
-  "description": "Azure Function App",
-  "scripts": {
-    "start": "func start",
-    "test": "echo \"No tests yet...\""
-  },
+  "main": "index.js",
+  "type": "commonjs",
   "dependencies": {
     "@azure/functions": "^4.0.0",
-    "@azure/storage-blob": "^12.27.0"
+    "@supabase/supabase-js": "^2.49.4",
+    "openai": "^4.96.0",
+    "dotenv": "^16.5.0"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
