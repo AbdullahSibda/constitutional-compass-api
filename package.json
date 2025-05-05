@@ -7,6 +7,8 @@
     "@azure/functions": "^4.0.0",
     "@supabase/supabase-js": "^2.49.4",
     "openai": "^4.96.0",
+    "gpt-tokenizer": "^2.9.0",
+    "pdfjs-dist": "^3.9.179",
     "dotenv": "^16.5.0"
   },
   "engines": {
