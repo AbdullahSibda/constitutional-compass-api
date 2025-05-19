@@ -40,12 +40,16 @@ module.exports = async function (context, req) {
     } else if (mimeType.startsWith("text/")) {
       fullText = Buffer.from(await fileData.arrayBuffer()).toString("utf-8");
     } else {
-      context.res = {
-        status: 415,
-        body: { error: "Unsupported mimeType" },
-        headers: { "Content-Type": "application/json" }
-      };
-      return;
+        const { data: documentData, error: documentError } = await supabase
+          .from("documents")
+          .select("metadata")
+          .eq("id", documentId)
+          .single();
+
+        if (documentError || !documentData?.metadata?.description) {
+          throw new Error("Document description is required for non-PDF/text files");
+        }
+        fullText = documentData.metadata.description;
     }
 
     // 3) Split into chunks
