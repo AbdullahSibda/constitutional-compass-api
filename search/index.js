@@ -39,8 +39,9 @@ module.exports = async function (context, req) {
 
     if (chunkError) throw chunkError;
     
-    chunks = chunks.filter((c) => c.similarity_score < -0.3);
-    context.log(`Found ${chunks.length} potential matches`);
+    // Filter out soft-deleted chunks and by similarity score
+    chunks = chunks.filter(c => !c.is_deleted && c.similarity_score < -0.3);
+    context.log(`Found ${chunks.length} potential matches after filters`);
 
     if (!chunks || chunks.length === 0) {
       context.res = {
@@ -54,7 +55,23 @@ module.exports = async function (context, req) {
       return;
     }
 
-    // 3. Group by document and process snippets
+    // 3. Get all unique document IDs from the chunks
+    const allDocIds = [...new Set(chunks.map(c => c.document_id))];
+
+    // 4. Get only non-deleted documents
+    const { data: docs, error: docError } = await supabase
+      .from("documents")
+      .select("id, name, storage_path, metadata")
+      .in("id", allDocIds)
+      .eq("is_deleted", false);
+
+    if (docError) throw docError;
+
+    // 5. Filter chunks to only those from non-deleted documents
+    const validDocIds = docs.map(d => d.id);
+    chunks = chunks.filter(c => validDocIds.includes(c.document_id));
+
+    // 6. Group by document and process snippets
     const byDoc = {};
     chunks.forEach((chunk) => {
       const docId = chunk.document_id;
@@ -74,18 +91,9 @@ module.exports = async function (context, req) {
     );
 
     const topDocs = docsWithSnippets.slice(0, 10);
-    const docIds = topDocs.map((d) => d.docId);
     context.log(`Processing top ${topDocs.length} documents`);
 
-    // 4. Get document metadata
-    const { data: docs, error: docError } = await supabase
-      .from("documents")
-      .select("id, name, storage_path, metadata")
-      .in("id", docIds);
-
-    if (docError) throw docError;
-
-    // 5. Process results with signed URLs
+    // 7. Process results with signed URLs
     context.log('Generating signed URLs...');
     const results = await Promise.all(
       topDocs.map(async ({ docId, snippets }) => {
@@ -114,7 +122,7 @@ module.exports = async function (context, req) {
       })
     );
 
-    // 6. Filter unique results
+    // 8. Filter unique results
     const uniqueResults = results.filter((r, i, arr) => 
       r && arr.findIndex(item => item?.document_id === r.document_id) === i
     );
